@@ -1,26 +1,51 @@
-version: "3"
+version: "3.3"
 services:
   spark-master:
-    image: apache/spark:latest
-    container_name: spark-master
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
+    image: spark:latest
     ports:
-      - "8080:8080"  # Spark Master UI
-      - "7077:7077"  # Spark Master Cluster Port
-      - "4040:4040"  # Spark Job UI
+      - "9090:8080"
+      - "7077:7077"
     volumes:
-      - spark_data:/opt/spark/work
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
+    environment:
+      - SPARK_LOCAL_IP=spark-master
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master
 
-  spark-worker:
-    image: apache/spark:latest
-    container_name: spark-worker
-    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+  spark-worker-a:
+    image: spark:latest
+    ports:
+      - "9091:8080"
+      - "7000:7000"
     depends_on:
       - spark-master
-    ports:
-      - "8081:8081"  # Spark Worker UI
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_LOCAL_IP=spark-worker-a
     volumes:
-      - spark_data:/opt/spark/work
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
 
-volumes:
-  spark_data:
+  spark-worker-b:
+    image: spark:latest
+    ports:
+      - "9092:8080"
+      - "7001:7000"
+    depends_on:
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+      - SPARK_WORKER_CORES=1
+      - SPARK_WORKER_MEMORY=1G
+      - SPARK_DRIVER_MEMORY=1G
+      - SPARK_EXECUTOR_MEMORY=1G
+      - SPARK_LOCAL_IP=spark-worker-b
+    volumes:
+      - ./apps:/opt/spark-apps
+      - ./data:/opt/spark-data
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077

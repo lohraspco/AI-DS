@@ -1,1 +1,6 @@
+local/
 non_track
+.metals/
+apache_spark_docker/hello-world/
+.scala-build/
+.bsp/
