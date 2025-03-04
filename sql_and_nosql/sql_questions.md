@@ -1,27 +1,26 @@
-# Window Functions:
+Here are a list of SQL question answers
 
-What are window functions in SQL, and how do they differ from aggregate functions?
-1. Scope:
-
+# Window Function:
+1.  What are window functions in SQL, and how do they differ from aggregate functions?
+- Scope:
 Aggregate Functions: Collapse multiple rows into a single summary row (e.g., SUM(), AVG(), COUNT()).
-
 Window Functions: Perform calculations across a "window" of rows without collapsing the result set (e.g., ROW_NUMBER(), RANK(), LEAD(), LAG()).
 
-2. Usage:
-
+- Usage:
 Aggregate Functions: Often used with GROUP BY to summarize data.
-
 Window Functions: Used with the OVER() clause to define the window.
 
-Write a query to calculate the running (rolling) total of rental amounts for each customer.
+
+2. Write a query to calculate the running (rolling) total of rental amounts for each customer.
 ~~~sql
 select customer_id, amount, 
     sum(amount) over (partition by customer_id order by payment_date) as runnint_total
 from payment;
 ~~~
 
+# Having:
 
-# Where VS Having 
+3. What are differences between Where and Having 
 - WHERE Clause:
 Purpose: Filters rows before any grouping or aggregation takes place.
 Usage: Used with SELECT, UPDATE, DELETE statements
@@ -42,21 +41,40 @@ GROUP BY customer_id
 HAVING SUM(amount) > 500;
 ~~~
 
-# Common Table Expressions (CTEs):
 
-Explain the difference between a CTE and a subquery.
+# CTE :
+
+4. Explain the difference between a CTE and a subquery.
 - Scope and Readability:CTEs are defined at the beginning of the query, making the query easier to read and understand.
 - Reusability:CTEs can be referenced multiple times in the same query, whereas subqueries cannot.
 - Recursion: CTEs can be recursive, allowing for more complex operations like hierarchical queries. Subqueries do not support recursion.
-
-
 Write a recursive CTE to find all the films rented by a specific customer, including the rental dates.
+
+
 
 # Joins:
 
-What is the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL JOIN?
+5. What is the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL JOIN?
+![joins](..\media\inner-joins-and-outer-joins-in-sql-1.jpg)
 
-Write a query to find customers who have rented films from both the "Action" and "Comedy" categories.
+6. Given the following tables
+
+- Table 1: Signups (user_id: int, time_stamp: datetime)
+- Table 2: Confirmations (user_id: int, time_stamp: datetime, action: enum [confirmed, timeout] )
+
+Write a solution to find the confirmation rate of each user.
+
+~~~sql
+select s.user_id, coalesce (round(d.confirmation_rate,2), 0.0) as confirmation_rate 
+from Signups s
+left join(
+        select user_id, avg(case when action='confirmed' then 1 else 0 end) as confirmation_rate
+        from Confirmations
+        group by(user_id)) d 
+    on d.user_id = s.user_id
+~~~
+
+7. Write a query to find customers who have rented films from both the "Action" and "Comedy" categories.
 
 Subqueries:
 

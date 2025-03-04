@@ -22,7 +22,20 @@ When to Use NoSQL?
 
 ![alt text](image.png)
 
+**Nodes**: 
+- Nodes often represents entities or discrete objects that can be classified with zero or more labels.
+- Data is stored as properties of the nodes.
+- Properties are simple key-value pairs.
 
+**Lable**: Person (classifies nodes. A node can have one or more label)
+**Relationship**: direction and type
+- Relationship can have properties (Emil has known Johan since 2001)
+~~~sql
+MATCH p=shortestPath(
+(bacon:Person {name:"Kevin Bacon"})-[*]-(meg:Person {name:"Meg Ryan"})
+)
+RETURN p
+~~~
 ~~~sql
 MATCH (ee:Person) WHERE ee.name = 'Emil'
 CREATE (js:Person { name: 'Johan', from: 'Sweden', learn: 'surfing' }),
